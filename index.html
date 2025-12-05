@@ -3,1022 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>myUMBC Dashboard</title>
+    <title>myUMBC Dashboard - Database Aligned</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-        }
-
-        nav {
-            background-color: #d3d3d3;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 60px;
-            flex: 1;
-        }
-
-        .nav-links a {
-            color: #555;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover {
-            color: #000;
-        }
-
-        .star-icon {
-            width: 60px;
-            height: 60px;
-            background-color: #ffd700;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .star-icon:hover {
-            transform: scale(1.1);
-        }
-
-        .star-icon::after {
-            content: "Student\AInfo";
-            white-space: pre;
-            font-size: 10px;
-            text-align: center;
-            line-height: 1.2;
-            color: #333;
-        }
-
-        .notification-container {
-            position: fixed;
-            top: 120px;
-            right: 40px;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .notification-icon {
-            width: 0;
-            height: 0;
-            border-left: 40px solid transparent;
-            border-right: 40px solid transparent;
-            border-bottom: 70px solid #ff0000;
-            position: relative;
-            margin: 0 auto;
-        }
-
-        .notification-icon::after {
-            content: "!";
-            color: white;
-            font-size: 48px;
-            font-weight: bold;
-            position: absolute;
-            top: 15px;
-            left: -8px;
-        }
-
-        .notification-text {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .main-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: calc(100vh - 120px);
-            padding: 40px;
-        }
-
-        .welcome-card {
-            background-color: #d3d3d3;
-            padding: 60px 80px;
-            border-radius: 8px;
-            text-align: center;
-            max-width: 800px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .welcome-card h1 {
-            font-size: 32px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .welcome-card h2 {
-            font-size: 24px;
-            color: #555;
-            margin-bottom: 40px;
-            font-weight: normal;
-        }
-
-        .welcome-card p {
-            font-size: 18px;
-            color: #444;
-            line-height: 1.8;
-            margin-bottom: 20px;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: flex;
-        }
-
-        .student-info-card {
-            background-color: #d3d3d3;
-            padding: 60px 80px;
-            border-radius: 8px;
-            text-align: center;
-            max-width: 700px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .student-info-card h2 {
-            font-size: 36px;
-            color: #333;
-            margin-bottom: 60px;
-        }
-
-        .student-info-card p {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-
-        .edit-btn {
-            position: fixed;
-            top: 180px;
-            right: 80px;
-            width: 180px;
-            height: 180px;
-            background-color: #ffd700;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-        }
-
-        .edit-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .advisor-notes-card {
-            background-color: #d3d3d3;
-            padding: 40px;
-            border-radius: 8px;
-            flex: 1;
-            max-width: 400px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .advisor-notes-card h2 {
-            font-size: 32px;
-            color: #333;
-            margin-bottom: 30px;
-            text-decoration: underline;
-        }
-
-        .note-item {
-            background-color: #fff;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .note-item:hover {
-            background-color: #f0f0f0;
-        }
-
-        .note-date {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .note-preview {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .schedule-meeting-card {
-            background-color: #d3d3d3;
-            padding: 40px;
-            border-radius: 8px;
-            flex: 1;
-            max-width: 500px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .schedule-meeting-card h2 {
-            font-size: 32px;
-            color: #333;
-            margin-bottom: 30px;
-            text-decoration: underline;
-        }
-
-        .calendar {
-            border: 2px solid #666;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0;
-            margin-top: 20px;
-        }
-
-        .calendar-cell {
-            border: 1px solid #666;
-            padding: 30px 20px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-            background-color: #d3d3d3;
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .calendar-cell:hover:not(.empty) {
-            background-color: #c0c0c0;
-        }
-
-        .calendar-cell.selected {
-            background-color: #ffd700;
-        }
-
-        .advisor-info-card {
-            background-color: #d3d3d3;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 300px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .advisor-info-card h3 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-            text-decoration: underline;
-        }
-
-        .advisor-info-card p {
-            font-size: 16px;
-            color: #444;
-            margin-bottom: 10px;
-            line-height: 1.6;
-        }
-
-        .degree-planner-container {
-            width: 100%;
-            max-width: 1400px;
-            padding: 40px;
-        }
-
-        .grad-year {
-            font-size: 20px;
-            font-style: italic;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .planner-content {
-            display: grid;
-            grid-template-columns: 300px 1fr 300px;
-            gap: 30px;
-            align-items: start;
-        }
-
-        .current-schedule-card {
-            background-color: #d3d3d3;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .current-schedule-card h3 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .course-item {
-            background-color: #fff;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #333;
-            text-align: center;
-        }
-
-        .plan-status-card {
-            background-color: #ffd700;
-            padding: 40px 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        .plan-status-card h3 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .status-flow {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .status-item {
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .status-item.completed {
-            background-color: #90EE90;
-        }
-
-        .status-item.current {
-            background-color: #FFD700;
-            font-weight: bold;
-        }
-
-        .status-item.pending {
-            background-color: #ddd;
-        }
-
-        .four-year-plan {
-            background-color: #d3d3d3;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .four-year-plan h3 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .years-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .year-box {
-            background-color: #ffd700;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .year-box h4 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .year-box p {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 6px;
-            padding: 5px;
-            background-color: rgba(255,255,255,0.5);
-            border-radius: 3px;
-        }
-
-        .side-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-
-        .side-button {
-            background-color: #d3d3d3;
-            padding: 30px 40px;
-            border-radius: 50px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            border: 2px solid #999;
-        }
-
-        .side-button:hover {
-            transform: scale(1.05);
-        }
-
-        .recommendations-container {
-            width: 100%;
-            max-width: 1400px;
-            padding: 40px;
-            display: flex;
-            gap: 50px;
-            align-items: flex-start;
-        }
-
-        .recommendations-left {
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            flex: 1;
-        }
-
-        .recommendations-right {
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            flex: 1;
-        }
-
-        .smart-recommendations-card {
-            background-color: #d3d3d3;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border: 2px solid #999;
-        }
-
-        .smart-recommendations-card h2 {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .recommendation-criteria {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .criteria-item {
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 5px;
-        }
-
-        .criteria-label {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .criteria-value {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .request-button {
-            background-color: #ff3333;
-            padding: 40px 60px;
-            border-radius: 100px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #fff;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .request-button:hover {
-            transform: scale(1.05);
-            background-color: #ff4444;
-        }
-
-        .why-course-card {
-            background-color: #ffd700;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            min-height: 200px;
-            border: 2px solid #ccaa00;
-        }
-
-        .why-course-card h3 {
-            font-size: 26px;
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .course-reason {
-            background-color: rgba(255,255,255,0.6);
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .course-reason h4 {
-            color: #333;
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-
-        .course-reason p {
-            color: #555;
-            font-size: 14px;
-        }
-
-        .future-suggestions-card {
-            background-color: #ffd700;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            min-height: 250px;
-            border: 2px solid #ccaa00;
-        }
-
-        .future-suggestions-card h3 {
-            font-size: 26px;
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .suggestion-item {
-            background-color: rgba(255,255,255,0.6);
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .suggestion-item strong {
-            color: #333;
-        }
-
-        .suggestion-item span {
-            color: #555;
-            font-size: 14px;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #999;
-            border-radius: 4px;
-            font-family: Arial, sans-serif;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 40px;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .modal-header {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .modal-body {
-            margin-bottom: 20px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .btn-primary {
-            background-color: #ffd700;
-            color: #333;
-        }
-
-        .btn-secondary {
-            background-color: #d3d3d3;
-            color: #333;
-        }
-
-        .btn:hover {
-            opacity: 0.8;
-        }
-
-        .progress-tracker-container {
-            width: 100%;
-            max-width: 1200px;
-            padding: 40px;
-        }
-
-        .progress-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .progress-header h2 {
-            font-size: 32px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .progress-stats {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-
-        .stat-box {
-            background-color: #d3d3d3;
-            padding: 30px;
-            border-radius: 8px;
-            text-align: center;
-            min-width: 200px;
-        }
-
-        .stat-number {
-            font-size: 48px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .stat-label {
-            font-size: 16px;
-            color: #666;
-            margin-top: 10px;
-        }
-
-        .requirements-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .requirement-card {
-            background-color: #d3d3d3;
-            padding: 25px;
-            border-radius: 8px;
-        }
-
-        .requirement-card h3 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            background-color: #fff;
-            height: 30px;
-            border-radius: 15px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: #ffd700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #333;
-            font-weight: bold;
-            transition: width 0.3s;
-        }
-
-        .course-search-container {
-            width: 100%;
-            max-width: 1200px;
-            padding: 40px;
-        }
-
-        .search-box {
-            background-color: #d3d3d3;
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            border: 2px solid #999;
-            border-radius: 8px;
-        }
-
-        .filter-section {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .filter-group {
-            flex: 1;
-        }
-
-        .filter-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: bold;
-        }
-
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #999;
-            border-radius: 4px;
-        }
-
-        .course-results {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .course-card {
-            background-color: #d3d3d3;
-            padding: 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .course-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .course-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .course-code {
-            font-size: 20px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .course-credits {
-            background-color: #ffd700;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-weight: bold;
-        }
-
-        .course-title {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 10px;
-        }
-
-        .course-details {
-            font-size: 14px;
-            color: #666;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
+        nav { background-color: #d3d3d3; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-links { display: flex; gap: 60px; flex: 1; }
+        .nav-links a { color: #555; text-decoration: none; font-size: 18px; font-weight: 500; cursor: pointer; }
+        .nav-links a:hover { color: #000; }
+        .main-container { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 120px); padding: 40px; }
+        .welcome-card { background-color: #d3d3d3; padding: 60px 80px; border-radius: 8px; text-align: center; max-width: 800px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .welcome-card h1 { font-size: 32px; color: #333; margin-bottom: 10px; }
+        .welcome-card h2 { font-size: 24px; color: #555; margin-bottom: 40px; font-weight: normal; }
+        .welcome-card p { font-size: 18px; color: #444; line-height: 1.8; margin-bottom: 20px; }
+        .page { display: none; }
+        .page.active { display: flex; }
+        .info-card { background-color: #d3d3d3; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 600px; }
+        .info-card h2 { font-size: 28px; color: #333; margin-bottom: 20px; }
+        .info-card p { font-size: 16px; color: #555; margin-bottom: 10px; }
+        .data-table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid #999; }
+        .data-table th { background-color: #ffd700; color: #333; font-weight: bold; }
+        .data-table tr:hover { background-color: #f0f0f0; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 5px; }
+        .btn-primary { background-color: #ffd700; color: #333; }
+        .btn-secondary { background-color: #999; color: #fff; }
+        .btn:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-links">
-            <a onclick="showPage('progress')">Progress Tracker</a>
-            <a onclick="showPage('advisor')">Advisor Notes</a>
-            <a onclick="showPage('planner')">Degree Planner</a>
-            <a onclick="showPage('search')">Course Search</a>
+            <a onclick="showPage('home')">Home</a>
+            <a onclick="showPage('student')">Student Info</a>
+            <a onclick="showPage('courses')">Courses</a>
+            <a onclick="showPage('plan')">Degree Plan</a>
             <a onclick="showPage('recommendations')">Recommendations</a>
+            <a onclick="showPage('notifications')">Notifications</a>
         </div>
-        <div class="star-icon" onclick="showPage('studentInfo')"></div>
     </nav>
-
-    <div class="notification-container" onclick="showNotifications()">
-        <div class="notification-icon"></div>
-        <div class="notification-text">Notifications</div>
-    </div>
 
     <!-- Home Page -->
     <div class="main-container page active" id="homePage">
         <div class="welcome-card">
-            <h1 id="welcomeText">Hello!</h1>
-            <h2>Welcome to your myUMBC</h2>
-            
-            <p id="creditsInfo">Loading...</p>
-            
-            <p>Look at "Recommendations" to figure out what courses to take</p>
+            <h1>Welcome to myUMBC Dashboard</h1>
+            <h2>Database-Aligned System</h2>
+            <p>This system stores data matching the SQL database schema with the following tables:</p>
+            <ul style="text-align: left; max-width: 500px; margin: 20px auto;">
+                <li>Student</li>
+                <li>Advisor</li>
+                <li>DegreePlan</li>
+                <li>SemesterPlan</li>
+                <li>Course</li>
+                <li>Enrollment</li>
+                <li>Review</li>
+                <li>Recommendation</li>
+                <li>Notification</li>
+            </ul>
         </div>
     </div>
 
     <!-- Student Info Page -->
-    <div class="main-container page" id="studentInfoPage">
-        <div class="student-info-card" id="studentInfoDisplay">
-            <h2>Student Info</h2>
-            <p>Loading...</p>
-        </div>
-        <div class="edit-btn" onclick="openEditModal()">Edit Info</div>
-    </div>
-
-    <!-- Advisor Notes Page -->
-    <div class="page" id="advisorPage" style="display: flex; padding: 40px; gap: 30px; width: 100%; justify-content: center;">
-        <div class="advisor-notes-card">
-            <h2>Advisor Notes</h2>
-            <div id="advisorNotesList"></div>
-        </div>
-
-        <div class="schedule-meeting-card">
-            <h2>Schedule Meeting</h2>
-            <div class="calendar" id="calendar">
-                <div class="calendar-cell empty"></div>
-                <div class="calendar-cell empty"></div>
-                <div class="calendar-cell" onclick="selectDate(this, 1)">1</div>
-                <div class="calendar-cell" onclick="selectDate(this, 2)">2</div>
-                <div class="calendar-cell" onclick="selectDate(this, 3)">3</div>
-                <div class="calendar-cell empty"></div>
-                <div class="calendar-cell" onclick="selectDate(this, 4)">4</div>
-                <div class="calendar-cell" onclick="selectDate(this, 5)">5</div>
-                <div class="calendar-cell" onclick="selectDate(this, 6)">6</div>
-                <div class="calendar-cell" onclick="selectDate(this, 7)">7</div>
-                <div class="calendar-cell" onclick="selectDate(this, 8)">8</div>
-                <div class="calendar-cell" onclick="selectDate(this, 9)">9</div>
-                <div class="calendar-cell" onclick="selectDate(this, 10)">10</div>
-                <div class="calendar-cell" onclick="selectDate(this, 11)">11</div>
-                <div class="calendar-cell" onclick="selectDate(this, 12)">12</div>
-            </div>
-            <div style="margin-top: 20px; text-align: center;">
-                <button class="btn btn-primary" onclick="confirmMeeting()">Confirm Meeting</button>
-            </div>
-        </div>
-
-        <div class="advisor-info-card" id="advisorInfoDisplay">
-            <h3>Advisor Info:</h3>
-            <p>Loading...</p>
+    <div class="main-container page" id="studentPage">
+        <div class="info-card" style="max-width: 900px;">
+            <h2>Student Information</h2>
+            <table class="data-table" id="studentTable"></table>
         </div>
     </div>
 
-    <!-- Degree Planner Page -->
-    <div class="page" id="plannerPage">
-        <div class="degree-planner-container">
-            <div class="grad-year" id="gradYearDisplay">Loading...</div>
-            
-            <div class="planner-content">
-                <div style="display: flex; flex-direction: column; gap: 30px;">
-                    <div class="current-schedule-card" id="currentScheduleDisplay">
-                        <h3>Current Schedule</h3>
-                        <p>Loading...</p>
-                    </div>
-                    
-                    <div class="plan-status-card" id="planStatusDisplay">
-                        <h3>Plan Status</h3>
-                        <p>Loading...</p>
-                    </div>
-                </div>
+    <!-- Courses Page -->
+    <div class="main-container page" id="coursesPage">
+        <div class="info-card" style="max-width: 1000px;">
+            <h2>Course Catalog</h2>
+            <table class="data-table" id="courseTable"></table>
+        </div>
+    </div>
 
-                <div class="four-year-plan" id="fourYearPlanDisplay">
-                    <h3>4 Year Plan</h3>
-                    <p>Loading...</p>
-                </div>
-
-                <div class="side-buttons">
-                    <div class="side-button" onclick="openEditPlanModal()">Edit Plan</div>
-                    <div class="side-button" onclick="viewAllPlans()">View Plans</div>
-                </div>
-            </div>
+    <!-- Degree Plan Page -->
+    <div class="main-container page" id="planPage">
+        <div class="info-card" style="max-width: 1100px;">
+            <h2>Degree Plans & Enrollments</h2>
+            <h3 style="margin-top: 30px;">Degree Plans</h3>
+            <table class="data-table" id="degreePlanTable"></table>
+            <h3 style="margin-top: 30px;">Semester Plans</h3>
+            <table class="data-table" id="semesterPlanTable"></table>
+            <h3 style="margin-top: 30px;">Enrollments</h3>
+            <table class="data-table" id="enrollmentTable"></table>
         </div>
     </div>
 
     <!-- Recommendations Page -->
-    <div class="page" id="recommendationsPage">
-        <div class="recommendations-container">
-            <div class="recommendations-left">
-                <div class="smart-recommendations-card">
-                    <h2>Smart Recommendations</h2>
-                    <div class="recommendation-criteria" id="recommendationCriteria">
-                        <p>Loading...</p>
-                    </div>
-                </div>
-                
-                <div class="request-button" onclick="requestSuggestions()">
-                    Request Suggestions
-                </div>
-            </div>
-
-            <div class="recommendations-right" id="recommendationsList">
-                <p>Loading recommendations...</p>
-            </div>
+    <div class="main-container page" id="recommendationsPage">
+        <div class="info-card" style="max-width: 1000px;">
+            <h2>Course Recommendations</h2>
+            <table class="data-table" id="recommendationTable"></table>
         </div>
     </div>
 
-    <!-- Progress Tracker Page -->
-    <div class="page" id="progressPage">
-        <div class="progress-tracker-container">
-            <div class="progress-header">
-                <h2>Academic Progress Tracker</h2>
-                <p style="color: #666;" id="progressSubtitle">Loading...</p>
-            </div>
-
-            <div class="progress-stats" id="progressStats">
-                <p>Loading...</p>
-            </div>
-
-            <div class="requirements-grid" id="requirementsGrid">
-                <p>Loading...</p>
-            </div>
+    <!-- Notifications Page -->
+    <div class="main-container page" id="notificationsPage">
+        <div class="info-card" style="max-width: 900px;">
+            <h2>Notifications</h2>
+            <table class="data-table" id="notificationTable"></table>
         </div>
     </div>
 
-    <!-- Course Search Page -->
-    <div class="page" id="searchPage">
-        <div class="course-search-container">
-            <h2 style="text-align: center; margin-bottom: 30px; font-size: 32px; color: #333;">Course Search</h2>
+    <script>
+        // DATABASE STRUCTURE - Matches SQL Schema
+        const DB = {
+            students: [
+                {student_id: 1001, name: 'Alice Nguyen', email: 'anguyen1@umbc.edu', major: 'Computer Science', minor: 'Mathematics', gpa: 3.85, total_credits: 90},
+                {student_id: 1002, name: 'Brandon Lee', email: 'blee2@umbc.edu', major: 'Information Systems', minor: null, gpa: 3.40, total_credits: 75},
+                {student_id: 1003, name: 'Chloe Smith', email: 'csmith3@umbc.edu', major: 'Mechanical Engineering', minor: 'Physics', gpa: 3.67, total_credits: 105}
+            ],
+            advisors: [
+                {advisor_id: 2001, name: 'Dr. Karen Holt', email: 'kholt@umbc.edu', department: 'Computer Science & Electrical Engineering'},
+                {advisor_id: 2002, name: 'Prof. Michael Tran', email: 'mtran@umbc.edu', department: 'Information Systems'},
+                {advisor_id: 2003, name: 'Dr. Ana Rivera', email: 'arivera@umbc.edu', department: 'Mechanical Engineering'}
+            ],
+            degreePlans: [
+                {plan_id: 3001, student_id: 1001, advisor_id: 2001, major: 'Computer Science', expected_grad_year: 2026, status: 'Approved', last_updated: new Date()},
+                {plan_id: 3002, student_id: 1002, advisor_id: 2002, major: 'Information Systems', expected_grad_year: 2025, status: 'Submitted', last_updated: new Date()},
+                {plan_id: 3003, student_id: 1003, advisor_id: 2003, major: 'Mechanical Engineering', expected_grad_year: 2027, status: 'Draft', last_updated: new Date()}
+            ],
+            semesterPlans: [
+                {semester_id: 4001, plan_id: 3001, semester_name: 'Fall 2025', total_credits: 15},
+                {semester_id: 4002, plan_id: 3002, semester_name: 'Spring 2025', total_credits: 12},
+                {semester_id: 4003, plan_id: 3003, semester_name: 'Fall 2026', total_credits: 16}
+            ],
+            courses: [
+                {course_id: 5001, course_code: 'CMSC202', course_name: 'Computer Science II', credits: 4, prerequisites: 'CMSC201', department: 'Computer Science'},
+                {course_id: 5002, course_code: 'IS310', course_name: 'Database Design', credits: 3, prerequisites: 'IS210', department: 'Information Systems'},
+                {course_id: 5003, course_code: 'ENME301', course_name: 'Dynamics', credits: 3, prerequisites: 'ENME101', department: 'Mechanical Engineering'}
+            ],
+            enrollments: [
+                {enrollment_id: 6001, semester_id: 4001, course_id: 5001, grade: 'A'},
+                {enrollment_id: 6002, semester_id: 4002, course_id: 5002, grade: 'B'},
+                {enrollment_id: 6003, semester_id: 4003, course_id: 5003, grade: null}
+            ],
+            reviews: [
+                {review_id: 7001, student_id: 1001, course_id: 5001, professor_name: 'Dr. Jessica Park', rating: 5, comment: 'Great lectures and clear assignments.', date_posted: new Date(), approved: true},
+                {review_id: 7002, student_id: 1002, course_id: 5002, professor_name: 'Prof. Li Chen', rating: 4, comment: 'Challenging but rewarding.', date_posted: new Date(), approved: true}
+            ],
+            recommendations: [
+                {recommendation_id: 8001, student_id: 1001, course_id: 5002, reason: 'Good complement for database systems knowledge.', semester_suggested: 'Spring 2026', status: 'Pending'},
+                {recommendation_id: 8002, student_id: 1002, course_id: 5001, reason: 'To strengthen programming fundamentals.', semester_suggested: 'Fall 2025', status: 'Accepted'},
+                {recommendation_id: 8003, student_id: 1003, course_id: 5003, reason: 'Core requirement for major completion.', semester_suggested: 'Fall 2026', status: 'Pending'}
+            ],
+            notifications: [
+                {notification_id: 9001, student_id: 1001, message: 'Your degree plan was approved.', type: 'Approval', date_sent: new Date(), read_status: true},
+                {notification_id: 9002, student_id: 1002, message: 'Missing prerequisite for IS310.', type: 'Prerequisite', date_sent: new Date(), read_status: false},
+                {notification_id: 9003, student_id: 1003, message: 'Course ENME301 added to plan.', type: 'Update', date_sent: new Date(), read_status: true}
+            ]
+        };
+
+        // Render functions
+        function renderTable(tableId, data, columns) {
+            const table = document.getElementById(tableId);
+            let html = '<thead><tr>';
+            columns.forEach(col => html += `<th>${col}</th>`);
+            html += '</tr></thead><tbody>';
             
-            <div class="search-box">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search for courses" onkeyup="searchCourses()">
-                
-                <div class="filter-section">
-                    <div class="filter-group">
-                        <label>Department</label>
-                        <select id="deptFilter" onchange="searchCourses()">
-                            <option value="">All Departments</option>
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Credits</label>
-                        <select id="creditsFilter" onchange="searchCourses()">
-                            <option value="">Any Credits</option>
-                            <option value="3">3 Credits</option>
-                            <option
+            data.forEach(row => {
+                html += '<tr>';
+                columns.forEach(col => {
+                    const key = col.toLowerCase().replace(/ /g, '_');
+                    let value = row[key];
+                    if (value instanceof Date) value = value.toLocaleDateString();
+                    if (value === null) value = 'NULL';
+                    html += `<td>${value}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            table.innerHTML = html;
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId + 'Page').classList.add('active');
+            
+            // Render data when switching pages
+            if (pageId === 'student') {
+                renderTable('studentTable', DB.students, ['Student ID', 'Name', 'Email', 'Major', 'Minor', 'GPA', 'Total Credits']);
+            } else if (pageId === 'courses') {
+                renderTable('courseTable', DB.courses, ['Course ID', 'Course Code', 'Course Name', 'Credits', 'Prerequisites', 'Department']);
+            } else if (pageId === 'plan') {
+                renderTable('degreePlanTable', DB.degreePlans, ['Plan ID', 'Student ID', 'Advisor ID', 'Major', 'Expected Grad Year', 'Status', 'Last Updated']);
+                renderTable('semesterPlanTable', DB.semesterPlans, ['Semester ID', 'Plan ID', 'Semester Name', 'Total Credits']);
+                renderTable('enrollmentTable', DB.enrollments, ['Enrollment ID', 'Semester ID', 'Course ID', 'Grade']);
+            } else if (pageId === 'recommendations') {
+                renderTable('recommendationTable', DB.recommendations, ['Recommendation ID', 'Student ID', 'Course ID', 'Reason', 'Semester Suggested', 'Status']);
+            } else if (pageId === 'notifications') {
+                renderTable('notificationTable', DB.notifications, ['Notification ID', 'Student ID', 'Message', 'Type', 'Date Sent', 'Read Status']);
+            }
+        }
+
+        // Initialize
+        window.onload = () => showPage('home');
+    </script>
+</body>
+</html>
